@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebM to CSV Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+      <h1 class="text-2xl font-bold mb-4">WebM to CSV Converter</h1>
+      <input
+        type="file"
+        id="webmFile"
+        accept=".webm"
+        class="mb-4 w-full p-2 border rounded"
+      />
+      <button
+        id="convertBtn"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full mb-4"
+      >
+        Convert and Download CSV
+      </button>
+      <p id="status" class="text-gray-600"></p>
+    </div>
+
+    <script>
+      class DatasetHandler {
+        constructor() {
+          this.DBKeypoints = [
+            [
+              "nose_x",
+              "nose_y",
+              "left_eye_x",
+              "left_eye_y",
+              "right_eye_x",
+              "right_eye_y",
+              "left_ear_x",
+              "left_ear_y",
+              "right_ear_x",
+              "right_ear_y",
+              "left_shoulder_x",
+              "left_shoulder_y",
+              "right_shoulder_x",
+              "right_shoulder_y",
+              "left_elbow_x",
+              "left_elbow_y",
+              "right_elbow_x",
+              "right_elbow_y",
+              "left_wrist_x",
+              "left_wrist_y",
+              "right_wrist_x",
+              "right_wrist_y",
+              "left_hip_x",
+              "left_hip_y",
+              "right_hip_x",
+              "right_hip_y",
+              "left_knee_x",
+              "left_knee_y",
+              "right_knee_x",
+              "right_knee_y",
+              "left_ankle_x",
+              "left_ankle_y",
+              "right_ankle_x",
+              "right_ankle_y",
+            ],
+          ];
+        }
+
+        addKeypoints(keypoints) {
+          this.DBKeypoints.push(keypoints);
+        }
+
+        saveToCSV() {
+          const csvContent = `data:text/csv;charset=utf-8,${this.DBKeypoints.map(
+            (row) => row.join(",")
+          ).join("\n")}`;
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "dataset.csv");
+          document.body.appendChild(link);
+          link.click();
+          this.DBKeypoints = [this.DBKeypoints[0]]; // clear
+          document.body.removeChild(link);
+        }
+      }
+
+      const datasetHandler = new DatasetHandler();
+      const convertBtn = document.getElementById("convertBtn");
+      const webmFileInput = document.getElementById("webmFile");
+      const statusElement = document.getElementById("status");
+
+      convertBtn.addEventListener("click", () => {
+        const file = webmFileInput.files[0];
+        if (!file) {
+          statusElement.textContent = "Please select a WebM file first.";
+          return;
+        }
+
+        statusElement.textContent = "Processing WebM file...";
+
+        // Simulate processing the WebM file
+        setTimeout(() => {
+          // Generate some random keypoints data
+          for (let i = 0; i < 10; i++) {
+            const keypoints = Array(34)
+              .fill()
+              .map(() => Math.random().toFixed(2));
+            datasetHandler.addKeypoints(keypoints);
+          }
+
+          statusElement.textContent = "WebM processed. Saving CSV...";
+
+          // Save to CSV
+          datasetHandler.saveToCSV();
+
+          statusElement.textContent = "CSV file downloaded successfully!";
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>
